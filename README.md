@@ -19,6 +19,7 @@ Developed by **Team CodeFather** for Smart India Hackathon 2024
 - [Hardware Requirements](#hardware-requirements)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Demo Video](#demo)
 - [Model Information](#model-information)
 - [Project Structure](#project-structure)
 - [Troubleshooting](#troubleshooting)
@@ -270,6 +271,12 @@ To create a public link, set `share=True` in `launch()`.
 5. **Download Results** (Optional)
    - Right-click on annotated image → "Save Image As"
    - Copy analysis summary for reports
+
+---
+
+## DEMO VIDEO:
+
+[![Title](https://img.youtube.com/vi/WEvNaXpfy-I/maxresdefault.jpg)](https://youtu.be/WEvNaXpfy-I)
 
 ---
 
