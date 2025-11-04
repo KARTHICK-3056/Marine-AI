@@ -494,11 +494,11 @@ Developed with 💙 for Marine Conservation
 
 **K.RAKSHITHASRI**  
 📧 rakshiekt@gmail.com  
-🔗 [github.com/rakshithasri-k](https://github.com/rakshithasri-k)
+🔗 [github.com/rakshithasri-k](https://github.com/rakshithasri06)
 
 **M.N.RAKSHA**  
 📧 rakshanathan006@gmail.com  
-🔗 [github.com/raksha006](https://github.com/raksha006)o]
+🔗 [github.com/raksha006](https://github.com/raksha006)
 
 ---
 
