@@ -1,0 +1,13 @@
+# Route large binary assets through Git LFS instead of raw git history.
+# Requires `git lfs install` once per machine before the first commit/clone.
+*.pt filter=lfs diff=lfs merge=lfs -text
+test_img/**.jpg filter=lfs diff=lfs merge=lfs -text
+test_img/**.jpeg filter=lfs diff=lfs merge=lfs -text
+test_img/**.png filter=lfs diff=lfs merge=lfs -text
+
+# Force LF on anything the Pi executes. These are authored on Windows; a CRLF
+# checkout makes the kernel read the shebang as "/usr/bin/env bash\r" and fail
+# with a bare "bad interpreter: No such file or directory".
+*.sh text eol=lf
+*.service text eol=lf
+scripts/* text eol=lf

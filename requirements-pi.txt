@@ -1,0 +1,54 @@
+# Runtime dependencies for Raspberry Pi 5 (aarch64, Raspberry Pi OS Bookworm).
+#
+# Differences from the desktop requirements.txt:
+#   * opencv-python-headless instead of opencv-python -- the GUI build drags in
+#     GTK/Qt and X11 libs that a headless field Pi does not have and does not want.
+#   * torch is CPU-only. PyPI's aarch64 torch wheels have no CUDA in them, so no
+#     index-url gymnastics are needed, but they are still ~80 MB each.
+#   * ncnn / onnxruntime / tflite-runtime are the compiled-model backends. They
+#     are what make this fast; without them app.py falls back to PyTorch.
+#
+# Versions are floors, not pins: pip resolves the newest aarch64 wheel available
+# when create_offline_bundle.sh runs, and the resulting wheelhouse is the real
+# lockfile (checksummed in SHA256SUMS).
+
+# --- Core ---
+ultralytics>=8.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+
+# --- Web interface ---
+gradio>=4.0.0,<6.0.0
+# Required by gradio's FastAPI routes. Versions <0.0.10 ship a module named
+# `multipart` instead of `python_multipart`, which breaks `import gradio`.
+python-multipart>=0.0.10
+
+# --- Computer vision ---
+# headless: no GTK/Qt/X11 dependency chain on a machine with no display.
+opencv-python-headless>=4.8.0
+Pillow>=10.0.0
+numpy>=1.24.0
+
+# --- Utilities ---
+tqdm>=4.65.0
+pyyaml>=6.0
+
+# --- Compiled-model runtimes -------------------------------------------------
+# NCNN: the fastest path on a Cortex-A76 (hand-written NEON kernels, no BLAS
+# dependency). Note that ultralytics' AutoBackend tries to `pip install` ncnn
+# from GitHub on ARM64 if it is missing -- which fails on an offline Pi. Having
+# it here is what prevents that.
+ncnn>=1.0.20240410
+
+# ONNX Runtime: portable fallback backend, also useful for A/B testing accuracy.
+onnxruntime>=1.16.0
+
+# TFLite: the INT8 path. tflite-runtime is a ~2 MB interpreter-only package;
+# ultralytics prefers it over full TensorFlow (~500 MB) and imports it first.
+# If no aarch64 wheel exists for your Python version, drop this line and use
+# the NCNN backend instead -- INT8 TFLite is optional, not required.
+tflite-runtime>=2.14.0 ; platform_machine == "aarch64"
+
+# --- Diagnostics ---
+# Used by scripts/pi_healthcheck.py to report thermals, throttling and RSS.
+psutil>=5.9.0

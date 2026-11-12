@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+Marine-AI/
+
+# Environment variables
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Compiled model artifacts (rebuild with: python optimize_model.py export)
+# These are 100+ MB each and derived from models/best.pt, so they are built per
+# deployment rather than committed. models/exports.json is the manifest that
+# records how they were produced -- that one IS worth committing if you pin a
+# specific export configuration for a field build.
+models/*_ncnn_model/
+models/*_saved_model/
+models/*.onnx*
+models/*.tflite
+models/*.torchscript
+models/.calibration/
+models/.verify/
+
+# Offline deployment bundle (rebuild with: ./create_offline_bundle.sh)
+offline_wheels/
+marine_ai_offline_*.tar.gz
+
+# Ultralytics settings/cache redirected here by run_optimized.sh
+.ultralytics/
+
+# Drift reports
+drift*.json
+
+# Lint & test caches
+.ruff_cache/
+.pytest_cache/
+
+# Generated inference outputs
+outputs/
+

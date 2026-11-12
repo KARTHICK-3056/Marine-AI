@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "marine-ai",
+      "runtimeExecutable": "py",
+      "runtimeArgs": ["-3.13", "app.py"],
+      "port": 7860
+    }
+  ]
+}

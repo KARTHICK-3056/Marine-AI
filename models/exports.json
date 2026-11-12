@@ -1,0 +1,56 @@
+{
+  "exports": {
+    "onnx": {
+      "format": "onnx",
+      "path": "models/best.onnx",
+      "imgsz": 640,
+      "int8": false,
+      "source_weights": "models/best.pt",
+      "names": {
+        "0": "chaetognath",
+        "1": "larval fish",
+        "2": "Hydromedusa",
+        "3": "lobate ctenophore",
+        "4": "Pleurobrachia",
+        "5": "shrimp",
+        "6": "Siphonophore",
+        "7": "stomatopod larva",
+        "8": "Unknown",
+        "9": "Thaliac",
+        "10": "Poly",
+        "11": "Cumacean",
+        "12": "Cteno"
+      },
+      "export_seconds": 2.88,
+      "exported_at": "2026-08-07T00:30:17+0530",
+      "ultralytics": "8.4.46",
+      "size_mb": 103.65
+    },
+    "ncnn": {
+      "format": "ncnn",
+      "path": "models/best_ncnn_model",
+      "imgsz": 640,
+      "int8": false,
+      "source_weights": "models/best.pt",
+      "names": {
+        "0": "chaetognath",
+        "1": "larval fish",
+        "2": "Hydromedusa",
+        "3": "lobate ctenophore",
+        "4": "Pleurobrachia",
+        "5": "shrimp",
+        "6": "Siphonophore",
+        "7": "stomatopod larva",
+        "8": "Unknown",
+        "9": "Thaliac",
+        "10": "Poly",
+        "11": "Cumacean",
+        "12": "Cteno"
+      },
+      "export_seconds": 10.27,
+      "exported_at": "2026-08-07T00:30:31+0530",
+      "ultralytics": "8.4.46",
+      "size_mb": 103.58
+    }
+  }
+}

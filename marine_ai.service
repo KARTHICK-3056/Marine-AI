@@ -1,0 +1,126 @@
+# Marine AI - headless zooplankton detection service for Raspberry Pi 5.
+#
+#   sudo cp marine_ai.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now marine_ai
+#   journalctl -u marine_ai -f
+#
+# Adjust User/WorkingDirectory if the app does not live in /home/pi/Marine_AI.
+# The service user MUST be in the 'video' group to open the USB microscope:
+#   sudo usermod -aG video pi
+
+[Unit]
+Description=Marine AI zooplankton detection (Gradio, headless)
+Documentation=file:///home/pi/Marine_AI/docs/PI5_DEPLOYMENT.md
+# network-online is not required (the app is fully offline), but waiting for the
+# interface means the LAN bind address is up before Gradio binds to it.
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+# 'video' for /dev/video*, 'render' for any future VideoCore-assisted decode.
+SupplementaryGroups=video render
+WorkingDirectory=/home/pi/Marine_AI
+
+# --- Thread pool caps -------------------------------------------------------
+# Duplicated from run_optimized.sh because systemd's Environment= is what the
+# process actually starts with; the script re-exports the same values, so the
+# two agree and either entry point behaves identically.
+Environment=CPU_THREADS=4
+Environment=OMP_NUM_THREADS=4
+Environment=MKL_NUM_THREADS=4
+Environment=OPENBLAS_NUM_THREADS=4
+Environment=VECLIB_MAXIMUM_THREADS=4
+Environment=NUMEXPR_NUM_THREADS=4
+Environment=OMP_PROC_BIND=close
+Environment=OMP_PLACES=cores
+Environment=OMP_WAIT_POLICY=PASSIVE
+
+# --- jemalloc ---------------------------------------------------------------
+# LD_PRELOAD is honoured by systemd because it execs the binary directly.
+# Verify the path after install: dpkg -L libjemalloc2 | grep '\.so'
+Environment=LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libjemalloc.so.2
+Environment=MALLOC_CONF=background_thread:true,metadata_thp:auto,dirty_decay_ms:10000,muzzy_decay_ms:10000
+
+# --- Model / inference ------------------------------------------------------
+Environment=MODEL_BACKEND=auto
+Environment=YOLO_IMGSZ=416
+Environment=MAX_DIMENSION=1280
+Environment=CONFIDENCE_THRESHOLD=0.3
+Environment=YOLO_AUTOINSTALL=False
+Environment=YOLO_OFFLINE=1
+Environment=HF_HUB_OFFLINE=1
+Environment=YOLO_CONFIG_DIR=/home/pi/Marine_AI/.ultralytics
+
+# --- USB microscope ---------------------------------------------------------
+Environment=ENABLE_CAMERA=true
+Environment=CAMERA_DEVICE=0
+Environment=CAMERA_WIDTH=1920
+Environment=CAMERA_HEIGHT=1080
+Environment=CAMERA_FPS=30
+Environment=CAMERA_FOURCC=MJPG
+Environment=CAMERA_MAX_WIDTH=1280
+Environment=CAMERA_MAX_HEIGHT=720
+Environment=OPENCV_LOG_LEVEL=ERROR
+
+# --- Web server -------------------------------------------------------------
+# 0.0.0.0 so laptops/tablets on the Pi's Ethernet link or Wi-Fi hotspot can reach
+# the UI without a desktop session on the Pi. This is an unauthenticated web app
+# by default -- uncomment GRADIO_AUTH below on any network you do not control.
+Environment=GRADIO_SERVER_NAME=0.0.0.0
+Environment=GRADIO_SERVER_PORT=7860
+Environment=GRADIO_ANALYTICS_ENABLED=False
+Environment=GRADIO_SHARE=false
+#Environment=GRADIO_AUTH=marine:CHANGE_ME
+Environment=PYTHONUNBUFFERED=1
+
+ExecStart=/home/pi/Marine_AI/run_optimized.sh
+
+# --- Reliability ------------------------------------------------------------
+Restart=on-failure
+RestartSec=10
+# Model load + first inference on a cold page cache can take a while; don't let
+# systemd declare a startup failure before Gradio has bound its port.
+TimeoutStartSec=180
+TimeoutStopSec=30
+KillMode=mixed
+KillSignal=SIGINT
+
+# Recover from a wedged native backend rather than sitting dead in the field.
+WatchdogSec=0
+
+# --- Resource limits --------------------------------------------------------
+# The Pi has 8 GB. Cap RSS well below that so a runaway allocation gets the
+# service restarted instead of triggering the kernel OOM killer, which on a Pi
+# frequently picks sshd and locks you out of the box.
+MemoryMax=6G
+MemoryHigh=5G
+# Slight negative nice so inference stays responsive under I/O load, without
+# competing with kernel threads the way a realtime priority would.
+Nice=-5
+# Inference is CPU-bound and bursty; the default cgroup weight is fine, but be
+# explicit so a co-tenant service cannot starve it.
+CPUWeight=200
+IOWeight=100
+
+# --- Hardening --------------------------------------------------------------
+# Deliberately mild: /dev/video* access and the app's own writable directory are
+# both required, so a full sandbox would break the microscope.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=false
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+DeviceAllow=char-video4linux rw
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=marine-ai
+
+[Install]
+WantedBy=multi-user.target

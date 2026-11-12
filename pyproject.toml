@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "marine-ai"
+version = "1.0.0"
+description = "Embedded Intelligent Microscopy System for Zooplankton Identification"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "ultralytics>=8.0.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "gradio>=4.0.0,<6.0.0",
+    "python-multipart>=0.0.10",
+    "opencv-python>=4.8.0",
+    "Pillow>=10.0.0",
+    "numpy>=1.24.0",
+    "tqdm>=4.65.0",
+    "pyyaml>=6.0",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "F",      # Pyflakes
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "I",      # isort (import ordering)
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "BLE",    # flake8-blind-except (no blind except Exception)
+    "SIM",    # flake8-simplify
+    "RUF",    # Ruff-specific rules
+    "PLE",    # Pylint errors
+    "PLW",    # Pylint warnings (e.g. PLW1508, PLW1510)
+    "PYI",    # flake8-pyi (type stubs / modern typing)
+]
+ignore = [
+    "E501",    # Line too long (managed by formatter; long HTML report templates in Gradio)
+    "E402",    # Module level import not at top of file (app.py and optimize_model.py configure environment variables and sys.path before C-extension imports)
+    "PLW0603", # Using global statement to update module singleton (_stream in camera.py)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["camera", "optimize_model", "app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

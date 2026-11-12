@@ -1,0 +1,37 @@
+# Model-compilation toolchain for `optimize_model.py export`.
+#
+# Install this on the DEV MACHINE (x86_64 Linux is strongly preferred), not on
+# the field Pi. Nothing here is needed to *run* inference -- only to produce the
+# NCNN / ONNX / INT8 TFLite artifacts that the Pi then loads.
+#
+#     pip install -r requirements.txt -r requirements-export.txt
+#     python optimize_model.py export --imgsz 416
+#
+# Why not on the Pi:
+#   * The TFLite INT8 path runs onnx2tf, which needs full TensorFlow. TF's
+#     aarch64 wheels are large, slow, and the converter is memory-hungry enough
+#     to OOM on an 8 GB Pi partway through a YOLOv8 graph.
+#   * NCNN export shells out to `pnnx`, which ultralytics downloads as a
+#     prebuilt binary -- so the export host needs internet regardless.
+
+# --- ONNX (also the intermediate representation for NCNN and TFLite) ---
+onnx>=1.14.0
+onnxslim>=0.1.31
+onnxruntime>=1.16.0
+
+# --- NCNN ---
+# ultralytics fetches the pnnx binary itself; this is the Python runtime used to
+# load the result back for verification.
+ncnn>=1.0.20240410
+
+# --- TFLite INT8 ---
+# onnx2tf drives the ONNX -> SavedModel -> INT8 TFLite conversion. Its helper
+# packages are not optional: sng4onnx resolves op names, onnx_graphsurgeon
+# rewrites the graph, and tf_keras provides the Keras 2 API that onnx2tf needs
+# under TensorFlow 2.16+ (where Keras 3 became the default and broke it).
+tensorflow>=2.13.0
+onnx2tf>=1.26.3
+sng4onnx>=1.0.1
+onnx_graphsurgeon>=0.3.26
+tf_keras>=2.16.0
+flatbuffers>=23.5.26
