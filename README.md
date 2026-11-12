@@ -238,20 +238,5 @@ ruff format --check .
 
 ---
 
-## 👥 Team CodeFather
-
-**Smart India Hackathon (SIH)**  
-*Developed with 💙 for Marine Conservation and Autonomous Oceanography.*
-
-### Authors
-- **KARTHICK-3056** — [github.com/KARTHICK-3056](https://github.com/KARTHICK-3056) • `vkr3056@gmail.com`
-- **DIVYESH HARI G** — [github.com/DIVYESH-HARI](https://github.com/DIVYESH-HARI) • `divyesh02208@gmail.com`
-- **S. S. MADHAVAN** — [github.com/ssmadhavan006](https://github.com/ssmadhavan006) • `ssmadhavan006@gmail.com`
-- **G. K. AKASHGAUTHAM** — [github.com/Akashgautham](https://github.com/Akashgautham) • `gkakash2006@gmail.com`
-- **K. RAKSHITHASRI** — [github.com/rakshithasri06](https://github.com/rakshithasri06) • `rakshiekt@gmail.com`
-- **M. N. RAKSHA** — [github.com/raksha006](https://github.com/raksha006) • `rakshanathan006@gmail.com`
-
----
-
 ## 📄 License
 This project is open-source under the [MIT License](LICENSE).
